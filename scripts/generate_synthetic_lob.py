@@ -113,6 +113,47 @@ def generate_order_size() -> int:
         k=1
     )[0]
 
+def generate_price(current_price: float) -> float:
+    """
+    Generate the next market price using
+    a simple random walk.
+
+    Parameters
+    ----------
+    current_price : float
+        Current market price.
+
+    Returns
+    -------
+    float
+        Updated market price.
+    """
+
+    price_change = random.uniform(-0.05, 0.05)
+
+    new_price = current_price + price_change
+
+    return round(new_price, 2)
+
+def generate_events() -> pd.DataFrame:
+    """
+    Generate a synthetic stream of
+    Limit Order Book events.
+
+    Returns
+    -------
+    pandas.DataFrame
+        DataFrame containing all events.
+    """
+
+    events = []
+
+    active_orders = {}
+
+    current_price = BASE_PRICE
+
+    next_order_id = 100000
+
 if __name__ == "__main__":
 
     print("Timestamp:")
@@ -138,4 +179,3 @@ if __name__ == "__main__":
 
     for _ in range(10):
         print(generate_order_size())
-        
