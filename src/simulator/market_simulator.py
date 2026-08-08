@@ -18,7 +18,7 @@ class MarketSimulator:
         normal_traders: int = 10,
         spoofing_traders: int = 1,
         initial_price: float = 100.0,
-    ):
+     ):
 
         self.current_price = initial_price
 
@@ -41,12 +41,13 @@ class MarketSimulator:
             )
             for i in range(spoofing_traders)
         ]
-    def step(self):
+
+    def add_order(self):
      """
-     Execute one simulation step.
+     Create one new order and add it
+     to the active order book.
      """
 
-    # Choose a trader randomly
      all_traders = (
         self.normal_traders +
         self.spoofing_traders
@@ -54,29 +55,29 @@ class MarketSimulator:
 
      trader = random.choice(all_traders)
 
-    # Advance simulated time
      self.current_timestamp += random.uniform(
         0.0001,
         0.001,
      )
 
-    # Ask trader to create an order
      order = trader.create_order(
         timestamp=round(self.current_timestamp, 6),
         order_id=self.next_order_id,
         current_price=self.current_price,
      )
 
-    # Store active order
-     self.active_orders[
-        order.order_id
-     ] = order
+     self.active_orders[order.order_id] = order
 
-    # Store event history
      self.events.append(order)
 
-    # Prepare next order ID
-     self.next_order_id += 1    
+     self.next_order_id += 1 
+
+    def step(self):
+     """
+     Execute one simulation step.
+     """
+
+     self.add_order()
 
     def run(self, num_steps: int):
      """
