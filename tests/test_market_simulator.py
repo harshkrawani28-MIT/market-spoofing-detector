@@ -1,0 +1,21 @@
+from src.simulator.market_simulator import MarketSimulator
+
+
+def test_simulator_initialization():
+
+    simulator = MarketSimulator(
+        normal_traders=5,
+        spoofing_traders=2,
+    )
+
+    assert len(simulator.normal_traders) == 5
+
+    assert len(simulator.spoofing_traders) == 2
+
+    assert simulator.current_price == 100.0
+
+    assert simulator.next_order_id == 100001
+
+    assert simulator.active_orders == {}
+
+    assert simulator.events == []
