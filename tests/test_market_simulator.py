@@ -19,3 +19,23 @@ def test_simulator_initialization():
     assert simulator.active_orders == {}
 
     assert simulator.events == []
+
+def test_simulation_step():
+
+    simulator = MarketSimulator()
+
+    simulator.step()
+
+    assert len(simulator.active_orders) == 1
+
+    assert len(simulator.events) == 1
+
+    assert simulator.next_order_id == 100002
+
+def test_run():
+
+    simulator = MarketSimulator()
+
+    simulator.run(20)
+
+    assert len(simulator.events) == 20
