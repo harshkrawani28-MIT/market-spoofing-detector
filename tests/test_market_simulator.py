@@ -24,7 +24,7 @@ def test_simulation_step():
 
     simulator = MarketSimulator()
 
-    simulator.step()
+    simulator.add_order()
 
     assert len(simulator.active_orders) == 1
 
@@ -39,3 +39,17 @@ def test_run():
     simulator.run(20)
 
     assert len(simulator.events) == 20
+
+def test_execute_order():
+
+    simulator = MarketSimulator()
+
+    simulator.add_order()
+
+    assert len(simulator.active_orders) == 1
+
+    simulator.execute_random_order()
+
+    assert len(simulator.active_orders) == 0
+
+    assert simulator.events[-1].event_type == "EXECUTE"
