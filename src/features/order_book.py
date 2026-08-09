@@ -126,3 +126,85 @@ class OrderBook:
             return None
 
         return (bid + ask) / 2
+    
+    def top_bid_levels(self, levels=5):
+     """
+     Return top N bid price levels.
+
+     Highest prices first.
+     """
+
+     prices = sorted(
+        self.bids.keys(),
+        reverse=True
+     )[:levels]
+
+     result = []
+
+     for price in prices:
+
+        level = self.bids[price]
+
+        result.append(
+            (
+                price,
+                level.total_volume(),
+                level.order_count(),
+            )
+         )
+
+     return result
+
+
+    def top_ask_levels(self, levels=5):
+     """
+     Return top N ask price levels.
+
+     Lowest prices first.
+     """
+
+     prices = sorted(
+        self.asks.keys()
+     )[:levels]
+
+     result = []
+
+     for price in prices:
+
+        level = self.asks[price]
+
+        result.append(
+            (
+                price,
+                level.total_volume(),
+                level.order_count(),
+            )
+         )
+
+     return result
+
+
+    def total_bid_volume(self, levels=5):
+     """
+     Total volume across the
+     first N bid levels.
+     """
+
+     return sum(
+        volume
+        for _, volume, _
+        in self.top_bid_levels(levels)
+     )
+
+
+    def total_ask_volume(self, levels=5):
+     """
+     Total volume across the
+     first N ask levels.
+     """
+
+     return sum(
+        volume
+        for _, volume, _
+        in self.top_ask_levels(levels)
+     )

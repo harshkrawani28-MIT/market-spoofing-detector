@@ -13,4 +13,5 @@ features = OrderBookFeatures.compute(
     snapshots[100]
 )
 
-print(features)
+for key, value in features.items():
+    print(f"{key:20} : {value}")
