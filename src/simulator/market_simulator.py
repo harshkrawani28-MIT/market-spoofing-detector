@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import csv
 import random
+from src.market.matching_engine import MatchingEngine
 
 from .normal_trader import NormalTrader
 from .spoofing_trader import SpoofingTrader
@@ -31,7 +32,7 @@ class MarketSimulator:
         self.active_orders = {}
         self.order_book = OrderBook()
         self.events = []
-
+        self.matching_engine = MatchingEngine()
         self.normal_traders = [
             NormalTrader(i + 1)
             for i in range(normal_traders)
@@ -45,34 +46,54 @@ class MarketSimulator:
         ]
 
     def add_order(self):
-        """
-        Create one new order and add it
-        to the active order book.
-        """
+     """
+     Create one new order and let the
+     matching engine process it.
+     """
 
-        all_traders = (
-            self.normal_traders +
-            self.spoofing_traders
+     all_traders = (
+        self.normal_traders +
+        self.spoofing_traders
+     )
+
+     trader = random.choice(all_traders)
+
+     self.current_timestamp += random.uniform(
+        0.0001,
+        0.001,
+     )
+
+     order = trader.create_order(
+        timestamp=round(self.current_timestamp, 6),
+        order_id=self.next_order_id,
+        current_price=self.current_price,
+     )
+
+     event_type, processed_order = (
+        self.matching_engine.process_order(order)
+     )
+
+     if event_type == "ADD":
+        self.active_orders[
+            processed_order.order_id
+        ] = processed_order
+
+     self.events.append(
+
+        Order(
+            order_id=processed_order.order_id,
+            timestamp=processed_order.timestamp,
+            event_type=event_type,
+            side=processed_order.side,
+            price=processed_order.price,
+            size=processed_order.size,
+            trader_id=processed_order.trader_id,
+            is_spoof=processed_order.is_spoof,
         )
 
-        trader = random.choice(all_traders)
+     )
 
-        self.current_timestamp += random.uniform(
-            0.0001,
-            0.001,
-        )
-
-        order = trader.create_order(
-            timestamp=round(self.current_timestamp, 6),
-            order_id=self.next_order_id,
-            current_price=self.current_price,
-        )
-
-        self.active_orders[order.order_id] = order
-        self.order_book.add_order(order)
-        self.events.append(order)
-
-        self.next_order_id += 1
+     self.next_order_id += 1
 
     def _remove_order(self, event_type: str):
         """
