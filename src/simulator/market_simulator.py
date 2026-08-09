@@ -10,7 +10,7 @@ import random
 from .normal_trader import NormalTrader
 from .spoofing_trader import SpoofingTrader
 from .order import Order
-
+from .order_book import OrderBook
 
 class MarketSimulator:
     """
@@ -29,6 +29,7 @@ class MarketSimulator:
         self.next_order_id = 100001
 
         self.active_orders = {}
+        self.order_book = OrderBook()
         self.events = []
 
         self.normal_traders = [
@@ -68,7 +69,7 @@ class MarketSimulator:
         )
 
         self.active_orders[order.order_id] = order
-
+        self.order_book.add_order(order)
         self.events.append(order)
 
         self.next_order_id += 1
@@ -87,7 +88,7 @@ class MarketSimulator:
         )
 
         order = self.active_orders.pop(order_id)
-
+        self.order_book.remove_order(order)
         self.current_timestamp += random.uniform(
             0.0001,
             0.001,
@@ -236,6 +237,25 @@ class MarketSimulator:
         for _ in range(num_steps):
             self.step()
 
+    def best_bid(self):
+     return self.order_book.best_bid()
+
+
+    def best_ask(self):
+     return self.order_book.best_ask()
+
+
+    def spread(self):
+     return self.order_book.spread()
+
+
+    def mid_price(self):
+     return self.order_book.mid_price()
+
+
+    def order_book_imbalance(self):
+     return self.order_book.order_book_imbalance()
+    
     def export_events_to_csv(self, filename):
         """
         Export events to CSV.
