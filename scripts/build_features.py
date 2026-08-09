@@ -1,20 +1,27 @@
-from src.features.feature_extractor import FeatureExtractor
+import pandas as pd
+
+from src.features.feature_engineering import FeatureEngineer
 
 
 def main():
 
-    extractor = FeatureExtractor(
+    df = pd.read_csv(
         "data/raw/market_events.csv"
     )
 
-    dataset = extractor.build_dataset()
+    engineer = FeatureEngineer(df)
 
-    dataset.to_csv(
+    df = engineer.add_basic_features()
+    df = engineer.add_order_lifetime()
+
+    df = engineer.add_order_age()
+
+    df.to_csv(
         "data/processed/features.csv",
         index=False,
     )
 
-    print(dataset.head())
+    print(df.head())
 
 
 if __name__ == "__main__":
